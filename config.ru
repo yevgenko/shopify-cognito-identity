@@ -1,10 +1,12 @@
 require 'bundler/setup'
 require 'sinatra/base'
 require 'omniauth-shopify-oauth2'
+require 'aws-sdk'
 
 SCOPE = 'read_products,read_orders,read_customers,write_shipping'
 SHOPIFY_API_KEY = ENV['SHOPIFY_API_KEY']
 SHOPIFY_SHARED_SECRET = ENV['SHOPIFY_SHARED_SECRET']
+COGNITO_POOL_ID = ENV['COGNITO_POOL_ID']
 
 unless SHOPIFY_API_KEY && SHOPIFY_SHARED_SECRET
   abort("SHOPIFY_API_KEY and SHOPIFY_SHARED_SECRET environment variables must be set")
@@ -29,6 +31,16 @@ class App < Sinatra::Base
   end
 
   get '/auth/:provider/callback' do
+    client = Aws::CognitoIdentity::Client.new
+    cognito_response = client.get_open_id_token_for_developer_identity({
+      identity_pool_id: COGNITO_POOL_ID, # required
+      # identity_id: "IdentityId", # to locate existent customer
+      logins: { # required
+        "co.bdhr.shopify-identity" => request.env['omniauth.auth'].uid,
+      },
+      token_duration: 1,
+    })
+
     <<-HTML
     <html>
     <head>
@@ -38,6 +50,8 @@ class App < Sinatra::Base
       <h3>Authorized</h3>
       <p>Shop: #{request.env['omniauth.auth'].uid}</p>
       <p>Token: #{request.env['omniauth.auth']['credentials']['token']}</p>
+      <p>Cognito Identity ID: #{cognito_response.identity_id}</p>
+      <p>Cognito Token: #{cognito_response.token}</p>
     </body>
     </html>
     HTML
