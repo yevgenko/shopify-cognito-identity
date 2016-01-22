@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>Shopify App</title>
+    <link href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.2/normalize.min.css'>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css'>
+    <script src='https://code.jquery.com/jquery-2.1.4.min.js'></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.12.min.js"></script>
+    <script src='/app.js'></script>
+    <style type="text/css" media="all">
+      body { margin-top: 30px; }
+      .templates { display: none; }
+    </style>
+  </head>
+  <body>
+  <div class='markup'>
+    <div class='view-container container'>
+      <div class='main-view'>
+        <div class='row'>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" charset="utf-8">
+    $(window).ready(myShopifyApp.appOnReady);
+  </script>
+  </body>
+</html>

@@ -41,20 +41,12 @@ class App < Sinatra::Base
       token_duration: 1,
     })
 
-    <<-HTML
-    <html>
-    <head>
-      <title>Shopify Oauth2</title>
-    </head>
-    <body>
-      <h3>Authorized</h3>
-      <p>Shop: #{request.env['omniauth.auth'].uid}</p>
-      <p>Token: #{request.env['omniauth.auth']['credentials']['token']}</p>
-      <p>Cognito Identity ID: #{cognito_response.identity_id}</p>
-      <p>Cognito Token: #{cognito_response.token}</p>
-    </body>
-    </html>
-    HTML
+    # NOTE: it could be CloudFront URL
+    # TODO: token is quite long, perhaps good idea would be store it in the
+    # session of authentication backend and then client-side appliction could
+    # pull it after redirect
+    # redirect "/shopify-app.html#auth" # triggers the authentication callback on client-side
+    redirect "/shopify-app.html?token=#{cognito_response.token}&identity_id=#{cognito_response.identity_id}&pool_id=#{COGNITO_POOL_ID}"
   end
 
   get '/auth/failure' do
